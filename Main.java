@@ -1,4 +1,5 @@
-import java.util.Scanner;
+
+        import java.util.Scanner;
 import java.util.ArrayList;
 
 public class Main {
@@ -285,7 +286,7 @@ public class Main {
         OutdoorHandymen h8 = new OutdoorHandymen(
                 false,
                 false,
-                false,
+                true,
                 "8",
                 "8",
                 "Keith",
@@ -346,7 +347,6 @@ public class Main {
 
         // Login prompt
         while (true) {
-            /*
             System.out.println("Username:");
             String User = scn.next();
             System.out.println("Password:");
@@ -359,327 +359,325 @@ public class Main {
             System.out.println("Wrong username or password. Try again");
             continue;
         }
-        */
-            while (true) {
-                // The main menu.
-                System.out.println("Handyman Service");
-                System.out.println("Recommended services today:");
-                // Displays featured handymen
-                for (Handymen handyman : featuredHandymen) {
-                    System.out.println(handyman.menuForm());
-                }
-                System.out.println("1. Proceed to selecting ID");
-                System.out.println("2. Search for other handymen");
-                System.out.println("3. View appointment status");
-                System.out.println("Select Option: ");
-                String opt = scn.next();
-                if (opt.equals("1")) {
-                    while (true) {
-                        for (Handymen handyman : featuredHandymen) {
-                            System.out.println(handyman.menuForm());
+        while (true) {
+            // The main menu.
+            System.out.println("Handyman Service");
+            System.out.println("Recommended services today:");
+            // Displays featured handymen
+            for (Handymen handyman : featuredHandymen) {
+                System.out.println(handyman.menuForm());
+            }
+            System.out.println("1. Proceed to selecting ID");
+            System.out.println("2. Search for other handymen");
+            System.out.println("3. View appointment status");
+            System.out.println("Select Option: ");
+            String opt = scn.next();
+            if (opt.equals("1")) {
+                while (true) {
+                    for (Handymen handyman : featuredHandymen) {
+                        System.out.println(handyman.menuForm());
+                    }
+                    System.out.println("Select ID (Press 'Q' to exit): ");
+                    String IDchoice = scn.next();
+                    // Option to select recommended handymen.
+                    boolean IDfound = false;
+                    boolean isAlreadyHired = false;
+                    Handymen selection = null;
+                    if (IDchoice.equals("Q")) {
+                        break;
+                    } else {
+                        for (Handymen element : employedHandymen(handymenList)) {
+                            if (element.id.equals(IDchoice)) {
+                                isAlreadyHired = true;
+                            } else {
+                                continue;
+                            }
                         }
-                        System.out.println("Select ID (Press 'Q' to exit): ");
-                        String IDchoice = scn.next();
-                        // Option to select recommended handymen.
-                        boolean IDfound = false;
-                        boolean isAlreadyHired = false;
-
-                        Handymen selection = null;
-                        if (IDchoice.equals("Q")) {
-                            break;
-                        } else {
-                            for (Handymen element : employedHandymen(handymenList)) {
-                                if (element.id.equals(IDchoice)) {
-                                    isAlreadyHired = true;
-                                } else {
-                                    continue;
-                                }
+                        for (Handymen element : featuredHandymen) {
+                            if (IDchoice.equals(element.id)) {
+                                IDfound = true;
+                                selection = element;
+                                break;
                             }
-                            for (Handymen element : featuredHandymen) {
-                                if (IDchoice.equals(element.id)) {
-                                    IDfound = true;
-                                    selection = element;
-                                    break;
-                                }
-                            }
-                            if (selection == null && isAlreadyHired == false) {
+                        }
+                        if (selection == null && isAlreadyHired == false) {
+                            invalidID(scn);
+                        }
+                        // If a hired handyman is selected (the ID is the same as any hired IDs), then the system tells that the user already hired the person.
+                        if (isAlreadyHired == true) {
+                            handymanAlreadyHired(scn);
+                        }
+                        // Hires handymen if ID is found and not already hired
+                        if (IDfound && !(isAlreadyHired)) {
+                            if (selection != null) {
+                                Hire(scn, selection);
+                            } else {
                                 invalidID(scn);
                             }
-                            // If a hired handyman is selected (the ID is the same as any hired IDs), then the system tells that the user already hired the person.
-                            if (isAlreadyHired == true) {
-                                handymanAlreadyHired(scn);
-                            }
-                            // Hires handymen if ID is found and not already hired
-                            if (IDfound && !(isAlreadyHired)) {
-                                if (selection != null) {
-                                    Hire(scn, selection);
-                                } else {
-                                    invalidID(scn);
-                                }
-                            }
                         }
                     }
-                } else if (opt.equals("2")) {
-                    // Option to search handymen.
-                    while (true) {
-                        boolean tagFound = false;
-                        System.out.println("Who are you looking for?");
-                        handymenSpec = removeTagDuplicates(handymenSpec);
-                        System.out.println(handymenSpec);
-                        System.out.println("If you want to exit search, press 'Q'.");
-                        System.out.println("Search: ");
-                        String src = scn.next();
-                        // If Q entered, returns to main menu, else proceeds to search
-                        if (src.equals("Q")) {
-                            break;
-                        } else {
-                            for (String elementX : handymenSpec) {
-                                if (src.equals(elementX)) {
-                                    tagFound = true;
-                                    break;
-                                }
-                            }
-                            // If search matches any specialization tags, proceeds to search confirmation and shows all handymen of the specifications
-                            if (tagFound == true) {
-                                System.out.println("Are you looking for " + src + "? (Yes/No)");
-                                String confirm = scn.next();
-                                if (confirm.equals("Yes")) {
-                                    // New searchedHandymen array
-                                    ArrayList<Handymen> searchedHandymen = new ArrayList<>();
-                                    // Adds handymen of matching tags to searchedHandymen and prints the handymen info as well
-                                    for (Handymen elementA : handymenList) {
-                                        if (elementA.specialization.equals(src)) {
-                                            searchedHandymen.add(elementA);
-                                            System.out.println(elementA.menuForm());
-                                        }
-                                    }
-                                    boolean IDfound = false;
-                                    boolean isAlreadyHired = false;
-                                    System.out.println("Select ID (Press 'Q' to exit): ");
-                                    String IDchoice = scn.next();
-                                    Handymen selection = null;
-                                    if (IDchoice.equals("Q")) {
-                                        break;
-                                    }
-                                    for (Handymen element : searchedHandymen) {
-                                        if (IDchoice.equals(element.id) && element.employed == true) {
-                                            isAlreadyHired = true;
-                                        }
-                                    }
-                                    if (isAlreadyHired == true) {
-                                        handymanAlreadyHired(scn);
-                                    } else {
-                                        for (Handymen element : searchedHandymen) {
-                                            if (IDchoice.equals(element.id)) {
-                                                IDfound = true;
-                                                selection = element;
-                                                if (selection instanceof OutdoorHandymen) {
-                                                    OutdoorHandymen outdoorSelection = (OutdoorHandymen) element;
-                                                    if (IDfound == true && outdoorSelection.optimalEnvironment) {
-                                                        Hire(scn, outdoorSelection);
-                                                    } else if(outdoorSelection.optimalEnvironment == false) {
-                                                        System.out.println("Sorry, due to weather or other factors, the handyman can't work here.");
-                                                        System.out.println("Press enter to go back.");
-                                                        scn.nextLine();
-                                                        scn.nextLine();
-                                                    }
-                                                } else if (element instanceof IndoorHandymen || element instanceof HybridHandymen) {
-                                                    if (IDfound == true) {
-                                                        Hire(scn, selection);
-                                                    }
-                                                }
-                                            }
-                                        }
-                                        if (IDfound == false) {
-                                            invalidID(scn);
-                                        }
-                                    }
-                                } else if (confirm.equals("No")) {
-                                    continue;
-                                } else {
-                                    invalidInput(scn);
-                                }
-                            } else if (tagFound == false) {
-                               tagNotExisting(scn);
-                            }
-                        }
-                    }
-                } else if (opt.equals("3")) {
-                    // Option to check handymen that are currently hired.
-                    while (true) {
-                        boolean handymenHired = false;
-                        for (Handymen elementE : handymenList) {
-                            if (elementE.employed == true) {
-                                if (elementE.servicing == true) {
-                                    System.out.println("Status: Employed + Servicing     " + elementE.menuForm());
-                                    handymenEmployed.add(elementE);
-                                    handymenHired = true;
-                                } else if (elementE.servicing == false) {
-                                    System.out.println("Status: Employed + Not Servicing " + elementE.menuForm());
-                                    handymenEmployed.add(elementE);
-                                    handymenHired = true;
-                                }
-                            }
-                        }
-                        if (handymenHired == false) {
-                            System.out.println("No handymen is being hired now.");
-                        }
-                        boolean paid = false;
-                        boolean IDfound = false;
-                        boolean paymentQuit = false;
-                        System.out.println("1. Select ID and pay");
-                        System.out.println("2. Confirm service progress");
-                        System.out.println("3. Main Menu");
-                        System.out.println("Option: ");
-                        String opt3 = scn.next();
-                        if (opt3.equals("1")) {
-                            for (Handymen elementF : handymenList) {
-                                if (elementF.employed == true && elementF.servicing == true) {
-                                    System.out.println(elementF.menuForm());
-                                }
-                            }
-                            System.out.println("Select ID (Enter 'Q' to exit): ");
-                            String IDchoice = scn.next();
-                            Handymen selection = null;
-                            if (IDchoice == "Q") {
+                }
+            } else if (opt.equals("2")) {
+                // Option to search handymen.
+                while (true) {
+                    boolean tagFound = false;
+                    System.out.println("Who are you looking for?");
+                    handymenSpec = removeTagDuplicates(handymenSpec);
+                    System.out.println(handymenSpec);
+                    System.out.println("If you want to exit search, press 'Q'.");
+                    System.out.println("Search: ");
+                    String src = scn.next();
+                    // If Q entered, returns to main menu, else proceeds to search
+                    if (src.equals("Q")) {
+                        break;
+                    } else {
+                        for (String elementX : handymenSpec) {
+                            if (src.equals(elementX)) {
+                                tagFound = true;
                                 break;
                             }
-                            for (Handymen element : handymenEmployed) {
-                                if (IDchoice.equals(element.id) && element.servicing == true) {
-                                    IDfound = true;
-                                    selection = element;
+                        }
+                        // If search matches any specialization tags, proceeds to search confirmation and shows all handymen of the specifications
+                        if (tagFound == true) {
+                            System.out.println("Are you looking for " + src + "? (Yes/No)");
+                            String confirm = scn.next();
+                            if (confirm.equals("Yes")) {
+                                // New searchedHandymen array
+                                ArrayList<Handymen> searchedHandymen = new ArrayList<>();
+                                // Adds handymen of matching tags to searchedHandymen and prints the handymen info as well
+                                for (Handymen elementA : handymenList) {
+                                    if (elementA.specialization.equals(src)) {
+                                        searchedHandymen.add(elementA);
+                                        System.out.println(elementA.menuForm());
+                                    }
+                                }
+                                boolean IDfound = false;
+                                boolean isAlreadyHired = false;
+                                System.out.println("Select ID (Press 'Q' to exit): ");
+                                String IDchoice = scn.next();
+                                Handymen selection = null;
+                                if (IDchoice.equals("Q")) {
                                     break;
                                 }
-                            }
-                            if (IDfound) {
-                                while (true) {
-                                    System.out.println("1. Pay");
-                                    System.out.println("2. Back");
-                                    String opt31 = scn.next();
-                                    if (opt31.equals("1")) {
-                                        System.out.println("Enter appointment duration in hours:");
-                                        int hours = scn.nextInt();
-                                        double fees = selection.price * hours;
-                                        while (true) {
-                                            System.out.println("The fee is: " + Double.toString(fees));
-                                            System.out.println("Select payment method:");
-                                            System.out.println("1. PayPal");
-                                            System.out.println("2. Debit / Credit card");
-                                            System.out.println("3. Go Back");
-                                            String opt311 = scn.next();
-                                            if (opt311.equals("1")) {
-                                                System.out.println("PayPal verification receiver");
-                                                System.out.println("Let's say the system detects payment, and the signal is sent to the prompt below.");
-                                                System.out.println("Is the fee paid? (Yes/No)");
-                                                String check = scn.next();
-                                                if (check.equals("Yes")) {
-                                                    paid = true;
-                                                    break;
-                                                } else if (check.equals("No")) {
-                                                    paid = false;
-                                                    break;
-                                                } else {
-                                                    invalidInput(scn);
-                                                }
-                                            } else if (opt311.equals("2")) {
-                                                System.out.println("DC / CC verification receiver");
-                                                System.out.println("Let's say the system detects payment.");
-                                                System.out.println("Is the fee paid? (Yes/No)");
-                                                String check = scn.next();
-                                                if (check.equals("Yes")) {
-                                                    paid = true;
-                                                    break;
-                                                } else if (check.equals("No")) {
-                                                    paid = false;
-                                                    break;
-                                                } else {
-                                                    invalidInput(scn);
-                                                }
-                                            } else if (opt311.equals("3")) {
-                                                break;
-                                            } else {
-
-                                            }
-                                        }
-                                    } else if (opt31.equals("2")) {
-                                        break;
-                                    }
-                                    if (paid == true) {
-                                        break;
+                                for (Handymen element : searchedHandymen) {
+                                    if (IDchoice.equals(element.id) && element.employed == true) {
+                                        isAlreadyHired = true;
                                     }
                                 }
+                                if (isAlreadyHired == true) {
+                                    handymanAlreadyHired(scn);
+                                } else {
+                                    for (Handymen element : searchedHandymen) {
+                                        if (IDchoice.equals(element.id)) {
+                                            IDfound = true;
+                                            selection = element;
+                                            if (selection instanceof OutdoorHandymen) {
+                                                OutdoorHandymen outdoorSelection = (OutdoorHandymen) element;
+                                                if (IDfound == true && outdoorSelection.optimalEnvironment) {
+                                                    Hire(scn, outdoorSelection);
+                                                } else if(outdoorSelection.optimalEnvironment == false) {
+                                                    System.out.println("Sorry, due to weather or other factors, the handyman can't work here.");
+                                                    System.out.println("Press enter to go back.");
+                                                    scn.nextLine();
+                                                    scn.nextLine();
+                                                }
+                                            } else if (element instanceof IndoorHandymen || element instanceof HybridHandymen) {
+                                                if (IDfound == true) {
+                                                    Hire(scn, selection);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (IDfound == false) {
+                                        invalidID(scn);
+                                    }
+                                }
+                            } else if (confirm.equals("No")) {
+                                continue;
                             } else {
                                 invalidInput(scn);
-                                break;
                             }
-                            if (paid == true) {
-                                System.out.println("Payment successful.");
-                                System.out.println("Thank you for choosing us!");
-                                selection.serviceDone();
-                            }
-                        } else if (opt3.equals("2")) {
-                            // ArrayList of handymen employed but not servicing
-                            ArrayList<Handymen> handymenEmployedNotServicing = new ArrayList<>();
-                            // Adds handymen employed that is not servicing to the ArrayList
-                            for (Handymen handyman : handymenList) {
-                                if (handyman.servicing == false && handyman.employed == true) {
-                                    handymenEmployedNotServicing.add(handyman);
-                                }
-                            }
-                            // Prints every handyman employed, but not servicing
-                            for (Handymen handyman : handymenEmployedNotServicing) {
-                                System.out.println(handyman.menuForm());
-                            }
-                            // Boolean tracks and breaks a while (true) loop if passcode matches
-                            boolean invalidIDBreak = false;
-                            boolean passcodeMatchBreak = false;
-                            boolean quitBreak = false;
-                            // Selects ID among list
-                            System.out.println("Select ID (Press 'Q' to exit): ");
-                            String IDchoice = scn.next();
-                            if (IDchoice.equals("Q")) {
-                                quitBreak = true;
-                            } else {
-                                while (true) {
-                                    for (Handymen handyman : handymenEmployedNotServicing) {
-                                        // Selects ID if it exists in the list
-                                        if (IDchoice.equals(handyman.id)) {
-                                            // Prompt passcode
-                                            System.out.println("Enter passcode (Press 'Q' to exit): ");
-                                            String passcodeEntered = scn.next();
-                                            // If passcode matches, handymen servicing is set to true and breaks the list
-                                            if (passcodeEntered.equals(handyman.passcode)) {
-                                                handyman.servicing();
-                                                System.out.println("Handyman confirmed service.");
-                                                passcodeMatchBreak = true;
-                                                break;
-                                            } else if(passcodeEntered.equals("Q")) {
-                                                quitBreak = true;
-                                                break;
-                                            } else {
-                                                System.out.println("Wrong passcode, please try again.");
-                                            }
-                                        } else {
-                                            invalidID(scn);
-                                            invalidIDBreak = true;
-                                            break;
-                                        }
-                                    }
-                                    // Referring to comments above, the boolean breaks the loop once passcode matches
-                                    if (passcodeMatchBreak || quitBreak || invalidIDBreak) {
-                                        break;
-                                    }
-                                }
-                            }
-                        } else if (opt3.equals("3")) {
-                            break;
-                        } else {
-                            invalidInput(scn);
+                        } else if (tagFound == false) {
+                            tagNotExisting(scn);
                         }
                     }
-                } else {
-                    invalidInput(scn);
                 }
+            } else if (opt.equals("3")) {
+                // Option to check handymen that are currently hired.
+                while (true) {
+                    boolean handymenHired = false;
+                    for (Handymen elementE : handymenList) {
+                        if (elementE.employed == true) {
+                            if (elementE.servicing == true) {
+                                System.out.println("Status: Employed + Servicing     " + elementE.menuForm());
+                                handymenEmployed.add(elementE);
+                                handymenHired = true;
+                            } else if (elementE.servicing == false) {
+                                System.out.println("Status: Employed + Not Servicing " + elementE.menuForm());
+                                handymenEmployed.add(elementE);
+                                handymenHired = true;
+                            }
+                        }
+                    }
+                    if (handymenHired == false) {
+                        System.out.println("No handymen is being hired now.");
+                    }
+                    boolean paid = false;
+                    boolean IDfound = false;
+                    boolean paymentQuit = false;
+                    System.out.println("1. Select ID and pay");
+                    System.out.println("2. Confirm service progress");
+                    System.out.println("3. Main Menu");
+                    System.out.println("Option: ");
+                    String opt3 = scn.next();
+                    if (opt3.equals("1")) {
+                        for (Handymen elementF : handymenList) {
+                            if (elementF.employed == true && elementF.servicing == true) {
+                                System.out.println(elementF.menuForm());
+                            }
+                        }
+                        System.out.println("Select ID (Enter 'Q' to exit): ");
+                        String IDchoice = scn.next();
+                        Handymen selection = null;
+                        if (IDchoice == "Q") {
+                            break;
+                        }
+                        for (Handymen element : handymenEmployed) {
+                            if (IDchoice.equals(element.id) && element.servicing == true) {
+                                IDfound = true;
+                                selection = element;
+                                break;
+                            }
+                        }
+                        if (IDfound) {
+                            while (true) {
+                                System.out.println("1. Pay");
+                                System.out.println("2. Back");
+                                String opt31 = scn.next();
+                                if (opt31.equals("1")) {
+                                    System.out.println("Enter appointment duration in hours:");
+                                    int hours = scn.nextInt();
+                                    double fees = selection.price * hours;
+                                    while (true) {
+                                        System.out.println("The fee is: " + Double.toString(fees));
+                                        System.out.println("Select payment method:");
+                                        System.out.println("1. PayPal");
+                                        System.out.println("2. Debit / Credit card");
+                                        System.out.println("3. Go Back");
+                                        String opt311 = scn.next();
+                                        if (opt311.equals("1")) {
+                                            System.out.println("PayPal verification receiver");
+                                            System.out.println("Let's say the system detects payment, and the signal is sent to the prompt below.");
+                                            System.out.println("Is the fee paid? (Yes/No)");
+                                            String check = scn.next();
+                                            if (check.equals("Yes")) {
+                                                paid = true;
+                                                break;
+                                            } else if (check.equals("No")) {
+                                                paid = false;
+                                                break;
+                                            } else {
+                                                invalidInput(scn);
+                                            }
+                                        } else if (opt311.equals("2")) {
+                                            System.out.println("DC / CC verification receiver");
+                                            System.out.println("Let's say the system detects payment.");
+                                            System.out.println("Is the fee paid? (Yes/No)");
+                                            String check = scn.next();
+                                            if (check.equals("Yes")) {
+                                                paid = true;
+                                                break;
+                                            } else if (check.equals("No")) {
+                                                paid = false;
+                                                break;
+                                            } else {
+                                                invalidInput(scn);
+                                            }
+                                        } else if (opt311.equals("3")) {
+                                            break;
+                                        } else {
+                                            invalidInput(scn);
+                                        }
+                                    }
+                                } else if (opt31.equals("2")) {
+                                    break;
+                                }
+                                if (paid == true) {
+                                    break;
+                                }
+                            }
+                        } else {
+                            invalidInput(scn);
+                            break;
+                        }
+                        if (paid == true) {
+                            System.out.println("Payment successful.");
+                            System.out.println("Thank you for choosing us!");
+                            selection.serviceDone();
+                        }
+                    } else if (opt3.equals("2")) {
+                        // ArrayList of handymen employed but not servicing
+                        ArrayList<Handymen> handymenEmployedNotServicing = new ArrayList<>();
+                        // Adds handymen employed that is not servicing to the ArrayList
+                        for (Handymen handyman : handymenList) {
+                            if (handyman.servicing == false && handyman.employed == true) {
+                                handymenEmployedNotServicing.add(handyman);
+                            }
+                        }
+                        // Prints every handyman employed, but not servicing
+                        for (Handymen handyman : handymenEmployedNotServicing) {
+                            System.out.println(handyman.menuForm());
+                        }
+                        // Boolean tracks and breaks a while (true) loop if passcode matches
+                        boolean invalidIDBreak = false;
+                        boolean passcodeMatchBreak = false;
+                        boolean quitBreak = false;
+                        // Selects ID among list
+                        System.out.println("Select ID (Press 'Q' to exit): ");
+                        String IDchoice = scn.next();
+                        if (IDchoice.equals("Q")) {
+                            quitBreak = true;
+                        } else {
+                            while (true) {
+                                for (Handymen handyman : handymenEmployedNotServicing) {
+                                    // Selects ID if it exists in the list
+                                    if (IDchoice.equals(handyman.id)) {
+                                        // Prompt passcode
+                                        System.out.println("Enter passcode (Press 'Q' to exit): ");
+                                        String passcodeEntered = scn.next();
+                                        // If passcode matches, handymen servicing is set to true and breaks the list
+                                        if (passcodeEntered.equals(handyman.passcode)) {
+                                            handyman.servicing();
+                                            System.out.println("Handyman confirmed service.");
+                                            passcodeMatchBreak = true;
+                                            break;
+                                        } else if (passcodeEntered.equals("Q")) {
+                                            quitBreak = true;
+                                            break;
+                                        } else {
+                                            System.out.println("Wrong passcode, please try again.");
+                                        }
+                                    } else {
+                                        invalidIDBreak = true;
+                                    }
+                                }
+                                // Referring to comments above, the boolean breaks the loop once passcode matches
+                                if (passcodeMatchBreak || quitBreak) {
+                                    break;
+                                } else if (invalidIDBreak) {
+                                    invalidID(scn);
+                                    break;
+                                }
+                            }
+                        }
+                    } else if (opt3.equals("3")) {
+                        break;
+                    } else {
+                        invalidInput(scn);
+                    }
+                }
+            } else {
+                invalidInput(scn);
             }
         }
     }
