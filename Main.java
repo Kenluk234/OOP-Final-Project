@@ -59,9 +59,11 @@ public class Main {
                     }
                 }
             } else if (handyconfirm.equals("No")) {
+                // Reject request by handyman
                 handymen.accept = false;
                 System.out.println("Sorry, your request is rejected.");
             } else {
+                // Shows invalid input message
                 System.out.println("Invalid input.");
                 System.out.println("Press enter to go back.");
                 scn.nextLine();
@@ -76,18 +78,6 @@ public class Main {
             scn.nextLine();
         }
     }
-    // Returns an ArrayList of handymen with duplicates removed
-    public static ArrayList<Handymen> removeDuplicates(ArrayList<Handymen> listA) {
-        ArrayList<Handymen> newList = new ArrayList<Handymen>();
-        for (Handymen elements : listA) {
-            if (!(newList.contains(elements))) {
-                newList.add(elements);
-            } else {
-                continue;
-            }
-        }
-        return newList;
-    }
     // Returns an ArrayList of profession tags, where tag duplicates are removed
     public static ArrayList<String> removeTagDuplicates(ArrayList<String> listB) {
         ArrayList<String> newList = new ArrayList<String>();
@@ -100,28 +90,15 @@ public class Main {
         }
         return newList;
     }
-
     // Returns an ArrayList of handymen hired by you
-    public static ArrayList<Handymen> employedHandymen(ArrayList<Handymen> listB) {
+    public static ArrayList<Handymen> employedHandymen(ArrayList<Handymen> listC) {
         ArrayList<Handymen> employedHandymenList = new ArrayList<Handymen>();
-        for (Handymen elementE : listB) {
+        for (Handymen elementE : listC) {
             if (elementE.employed == true) {
                 employedHandymenList.add(elementE);
             }
         }
         return employedHandymenList;
-    }
-
-    // Returns an ArrayList of IDs of your hired handymen
-    public static ArrayList<String> employedHandymenID(ArrayList<Handymen> listC) {
-        ArrayList<String> employedHandymenIDList = new ArrayList<String>();
-        for (Handymen elementE : listC) {
-            if (elementE.employed == true) {
-                String elementEID = elementE.id;
-                employedHandymenIDList.add(elementEID);
-            }
-        }
-        return employedHandymenIDList;
     }
     // Returns invalid input message
     public static void invalidInput(Scanner scn) {
@@ -147,6 +124,7 @@ public class Main {
         scn.nextLine();
         scn.nextLine();
     }
+    // Returns invalid ID message
     public static void invalidID(Scanner scn) {
         System.out.println("Invalid ID, please enter the correct ID.");
         System.out.println("Press enter to go back.");
@@ -168,6 +146,8 @@ public class Main {
         ArrayList<Handymen> featuredHandymen = new ArrayList<Handymen>();
         // An ArrayList that contains IDs of featured handymen
         ArrayList<String> featuredHandymenID = new ArrayList<String>();
+
+        // Handymen instances
         IndoorHandymen h1 = new IndoorHandymen(
                 false,
                 false,
@@ -372,7 +352,9 @@ public class Main {
             System.out.println("Select Option: ");
             String opt = scn.next();
             if (opt.equals("1")) {
+                // Select featured ID screen
                 while (true) {
+                    // Prints out all handyman's menu form
                     for (Handymen handyman : featuredHandymen) {
                         System.out.println(handyman.menuForm());
                     }
